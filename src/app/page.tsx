@@ -1,37 +1,12 @@
 "use client";
 
-import {
-  BarretenbergBackend,
-  ProofData,
-} from "@noir-lang/backend_barretenberg";
-import { InputMap, Noir } from "@noir-lang/noir_js";
-import { useEffect, useState } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
-import circuit from "../../noir/target/zkvax.json" assert { type: "json" };
-
-const backend = new BarretenbergBackend(circuit as any);
-const noir = new Noir(circuit as any, backend);
-
-async function prove() {
-  const input: InputMap = { x: 1, y: 2 };
-  const proof = await noir.generateFinalProof(input);
-  return proof;
-}
+import { Prover } from "./Prover";
 
 export default function App() {
   const account = useAccount();
-  const [isProving, setIsProving] = useState(false);
-  const [proof, setProof] = useState<ProofData["proof"]>();
   const { connectors, connect, status, error } = useConnect();
   const { disconnect } = useDisconnect();
-
-  useEffect(() => {
-    setIsProving(true);
-    prove().then((proof) => {
-      setProof(proof.proof);
-      setIsProving(false);
-    });
-  }, [setProof, setIsProving]);
 
   return (
     <>
@@ -53,12 +28,7 @@ export default function App() {
         )}
       </div>
 
-      <div>
-        Proof:
-        <div>
-          <pre>{isProving ? "Proving..." : proof}</pre>
-        </div>
-      </div>
+      <Prover />
 
       <div>
         <h2>Connect</h2>
