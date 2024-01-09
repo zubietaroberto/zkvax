@@ -1,11 +1,37 @@
-'use client'
+"use client";
 
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import {
+  BarretenbergBackend,
+  ProofData,
+} from "@noir-lang/backend_barretenberg";
+import { InputMap, Noir } from "@noir-lang/noir_js";
+import { useEffect, useState } from "react";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import circuit from "../../noir/target/zkvax.json" assert { type: "json" };
 
-function App() {
-  const account = useAccount()
-  const { connectors, connect, status, error } = useConnect()
-  const { disconnect } = useDisconnect()
+const backend = new BarretenbergBackend(circuit as any);
+const noir = new Noir(circuit as any, backend);
+
+async function prove() {
+  const input: InputMap = { x: 1, y: 2 };
+  const proof = await noir.generateFinalProof(input);
+  return proof;
+}
+
+export default function App() {
+  const account = useAccount();
+  const [isProving, setIsProving] = useState(false);
+  const [proof, setProof] = useState<ProofData["proof"]>();
+  const { connectors, connect, status, error } = useConnect();
+  const { disconnect } = useDisconnect();
+
+  useEffect(() => {
+    setIsProving(true);
+    prove().then((proof) => {
+      setProof(proof.proof);
+      setIsProving(false);
+    });
+  }, [setProof, setIsProving]);
 
   return (
     <>
@@ -17,14 +43,21 @@ function App() {
           <br />
           addresses: {JSON.stringify(account.addresses)}
           <br />
-          chainId: {account.chainId}
+          chainId: <pre>{account.chainId}</pre>
         </div>
 
-        {account.status === 'connected' && (
+        {account.status === "connected" && (
           <button type="button" onClick={() => disconnect()}>
             Disconnect
           </button>
         )}
+      </div>
+
+      <div>
+        Proof:
+        <div>
+          <pre>{isProving ? "Proving..." : proof}</pre>
+        </div>
       </div>
 
       <div>
@@ -42,7 +75,5 @@ function App() {
         <div>{error?.message}</div>
       </div>
     </>
-  )
+  );
 }
-
-export default App
