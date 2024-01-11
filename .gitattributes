@@ -1,0 +1,2 @@
+# Give Github Linguist a hint about the language used in this repository
+*.nr linguist-language=Noir
