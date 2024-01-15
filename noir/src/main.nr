@@ -1,31 +1,38 @@
 use dep::std;
 
-// Reference code: https://github.com/ZKCamp/noir-voting/blob/2-merkle-trees/circuits/src/main.nr
+// Inspired by: https://github.com/ZKCamp/noir-voting/blob/2-merkle-trees/circuits/src/main.nr
 
-fn main(root: pub Field, hash_paths: [Field; 2], index: Field, secret: Field) {
-    let commitment = std::hash::pedersen_hash([secret]);
-    let check_root = std::merkle::compute_merkle_root(commitment, index, hash_paths);   
-    assert(check_root == root);
+fn main(root: pub Field, index: Field, hash_path: [Field; 2], secret: Field, proposalId: pub Field) -> pub Field {
+    let note_commitment = std::hash::pedersen_hash([secret]);
+    let nullifier = std::hash::pedersen_hash([root, secret, proposalId]);
+    let check_root = std::merkle::compute_merkle_root(note_commitment, index, hash_path);
+    assert(root == check_root);
+
+    nullifier
 }
 
+
 #[test]
-fn main_test() {
-    let comm_1 = std::hash::pedersen_hash([1]);
-    let comm_2 = std::hash::pedersen_hash([2]);
-    let comm_3 = std::hash::pedersen_hash([3]);
-    let comm_4 = std::hash::pedersen_hash([4]);
+fn test_valid_build_merkle_tree() {
+    let commitment_0 =  std::hash::pedersen_hash([1]);
+    let commitment_1 =  std::hash::pedersen_hash([2]);
+    let commitment_2 =  std::hash::pedersen_hash([3]);
+    let commitment_3 =  std::hash::pedersen_hash([4]);
 
-    let left_branch = std::hash::pedersen_hash([comm_1, comm_2]);
-    let right_branch = std::hash::pedersen_hash([comm_3, comm_4]);
+    let left_branch = std::hash::pedersen_hash([commitment_0, commitment_1]);
+    let right_branch = std::hash::pedersen_hash([commitment_2, commitment_3]);
+
+    let root = std::hash::pedersen_hash([left_branch, right_branch]);
     
-    let root = std::hash::pedersen_hash([left_branch,  right_branch]);
+    let proposalId = 0;
+    let nullifier = main(
+        root,
+        0,
+        [commitment_1, right_branch],
+        1,
+        proposalId
+    );
 
-    let hash_paths = [comm_2, right_branch];
-
-    main(root, hash_paths, 0, 1);
-
-    let hash_paths3 = [comm_4, left_branch];
-
-    // For User 3
-    main(root, hash_paths3, 2, 3);
+    let expected_nullifier = std::hash::pedersen_hash([root, 1, proposalId]);
+    assert(nullifier == expected_nullifier);
 }
