@@ -20,7 +20,9 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/circuits/*": ["./noir/target/*"]
+      "@/contracts/*": ["./hardhat/artifacts/contracts/*"],
+      "@/typechain/*": ["./hardhat/typechain-types/contracts/*"],
+      "@/circuits/*": ["./hardhat/circuits/target/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

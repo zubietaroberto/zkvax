@@ -1,7 +1,7 @@
 "use client";
 
 import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { Prover } from "./Prover";
+import { Proposals } from "./Proposals";
 
 export default function App() {
   const account = useAccount();
@@ -28,7 +28,9 @@ export default function App() {
         )}
       </div>
 
-      <Prover />
+      {/* <Prover /> */}
+
+      <Proposals />
 
       <div>
         <h2>Connect</h2>
