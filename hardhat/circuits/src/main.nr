@@ -44,11 +44,11 @@ fn test_valid_build_merkle_tree() {
 fn test_precompute_hashes() {
     let size = 32;
 
-    let mut lastHash = std::hash::pedersen_hash([0, 0]);
+    let mut lastHash: Field = 0;
     for i in 0..size {
+      lastHash = std::hash::poseidon::bn254::hash_2([lastHash, lastHash]);
       std::println([i, lastHash]);
-      lastHash = std::hash::pedersen_hash([lastHash, lastHash]);
     }
 
-    assert(true);
+    assert(lastHash == 0x2f68a1c58e257e42a17a6c61dff5551ed560b9922ab119d5ac8e184c9734ead9);
 }
