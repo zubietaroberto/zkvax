@@ -3,21 +3,98 @@ pragma solidity 0.8.23;
 
 import "poseidon-sol/contracts/Poseidon.sol";
 
+// Inspired by "MerkleWithHistory" from the "TCash" project, but using Poseidon instead of MiMC
 contract MerkleRegistry {
-    Poseidon _hasher;
+    uint32 levels;
+    Poseidon hasher;
 
-    constructor() {
-        _hasher = new Poseidon();
+    // filledSubtrees and roots could be bytes32[size], but using mappings makes it cheaper because
+    // it removes index range check on every interaction
+    mapping(uint256 => bytes32) public filledSubtrees;
+    mapping(uint256 => bytes32) public roots;
+    uint32 public constant ROOT_HISTORY_SIZE = 30;
+    uint32 public currentRootIndex = 0;
+    uint32 public nextIndex = 0;
+
+    constructor(uint32 _levels) {
+        require(_levels > 0, "_levels should be greater than zero");
+        require(_levels < 32, "_levels should be less than 32");
+        levels = _levels;
+        hasher = new Poseidon();
+
+        for (uint32 i = 0; i < _levels; i++) {
+            filledSubtrees[i] = zeros(i);
+        }
+
+        roots[0] = zeros(_levels - 1);
     }
 
-    function hashTest(
-        uint256 element1,
-        uint256 element2
+    // @dev Hash 2 tree leaves, returns Poseidon(_left, _right)
+    function hashLeftRight(
+        uint256 _left,
+        uint256 _right
     ) public view returns (uint256) {
-        return _hasher.hash([element1, element2]);
+        return hasher.hash([_left, _right]);
     }
 
-    // @dev provides Zero (Empty) elements for a Poseidon Hash MerkleTree. Up to 32 levels.
+    function _insert(bytes32 _leaf) internal returns (uint32 index) {
+        uint32 _nextIndex = nextIndex;
+        require(
+            _nextIndex != uint32(2) ** levels,
+            "Merkle tree is full. No more leaves can be added"
+        );
+        uint32 currentIndex = _nextIndex;
+        bytes32 currentLevelHash = _leaf;
+        bytes32 left;
+        bytes32 right;
+
+        for (uint32 i = 0; i < levels; i++) {
+            if (currentIndex % 2 == 0) {
+                left = currentLevelHash;
+                right = zeros(i);
+                filledSubtrees[i] = currentLevelHash;
+            } else {
+                left = filledSubtrees[i];
+                right = currentLevelHash;
+            }
+            currentLevelHash = bytes32(
+                hashLeftRight(uint256(left), uint256(right))
+            );
+            currentIndex /= 2;
+        }
+
+        uint32 newRootIndex = (currentRootIndex + 1) % ROOT_HISTORY_SIZE;
+        currentRootIndex = newRootIndex;
+        roots[newRootIndex] = currentLevelHash;
+        nextIndex = _nextIndex + 1;
+        return _nextIndex;
+    }
+
+    // @dev Whether the root is present in the root history
+    function isKnownRoot(bytes32 _root) public view returns (bool) {
+        if (_root == 0) {
+            return false;
+        }
+        uint32 _currentRootIndex = currentRootIndex;
+        uint32 i = _currentRootIndex;
+        do {
+            if (_root == roots[i]) {
+                return true;
+            }
+            if (i == 0) {
+                i = ROOT_HISTORY_SIZE;
+            }
+            i--;
+        } while (i != _currentRootIndex);
+        return false;
+    }
+
+    // @dev Returns the last root
+    function getLastRoot() public view returns (bytes32) {
+        return roots[currentRootIndex];
+    }
+
+    // @dev Precalculated "Poseidon" hashes, when all leaves are "0x0".
     function zeros(uint256 level) public pure returns (bytes32) {
         if (level == 0x00)
             return
