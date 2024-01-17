@@ -36,3 +36,19 @@ fn test_valid_build_merkle_tree() {
     let expected_nullifier = std::hash::pedersen_hash([root, 1, proposalId]);
     assert(nullifier == expected_nullifier);
 }
+
+
+// NOTE: run this with `nargo test --show-output` to show the results!
+// We will precumpute the hashes for the merkle tree and use them in the circuit
+#[test]
+fn test_precompute_hashes() {
+    let size = 32;
+
+    let mut lastHash = std::hash::pedersen_hash([0, 0]);
+    for i in 0..size {
+      std::println([i, lastHash]);
+      lastHash = std::hash::pedersen_hash([lastHash, lastHash]);
+    }
+
+    assert(true);
+}
