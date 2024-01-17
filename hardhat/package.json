@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.4",
+    "poseidon-sol": "^0.1.1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.3",
+    "chai": "^4.4.1",
+    "mocha": "^10.2.0"
+  }
+}

@@ -1,7 +1,22 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.23;
 
+import "poseidon-sol/contracts/Poseidon.sol";
+
 contract MerkleRegistry {
+    Poseidon _hasher;
+
+    constructor() {
+        _hasher = new Poseidon();
+    }
+
+    function hashTest(
+        uint256 element1,
+        uint256 element2
+    ) public view returns (uint256) {
+        return _hasher.hash([element1, element2]);
+    }
+
     // @dev provides Zero (Empty) elements for a Poseidon Hash MerkleTree. Up to 32 levels.
     function zeros(uint256 level) public pure returns (bytes32) {
         if (level == 0x00)
