@@ -2,15 +2,31 @@ use dep::std;
 
 // Inspired by: https://github.com/ZKCamp/noir-voting/blob/2-merkle-trees/circuits/src/main.nr
 
-fn main(root: pub Field, index: Field, hash_path: [Field; 2], secret: Field) -> pub Field {
+fn main(root: pub Field, index: Field, hash_path: [Field; 32], secret: Field, size: Field) -> pub Field {
     let note_commitment = std::hash::pedersen_hash([secret]);
     let nullifier = std::hash::pedersen_hash([root, secret]);
-    let check_root = std::merkle::compute_merkle_root(note_commitment, index, hash_path);
+    let check_root = compute_merkle_root(note_commitment, index, hash_path, size);
     assert(root == check_root);
 
     nullifier
 }
 
+// Inspired By: https://github.com/noir-lang/noir/blob/v0.22.0/noir_stdlib/src/merkle.nr
+// Modified because "std::merkle::compute_merkle_root" version forces me to use Slices instead of Arrays.
+fn compute_merkle_root(leaf: Field, index: Field, hash_path: [Field; 32], size: Field) -> Field {
+    let index_bits = index.to_le_bits(size as u32);
+    let mut current = leaf;
+    for i in 0..size {
+        let path_bit = index_bits[i] as bool;
+        let (hash_left, hash_right) = if path_bit {
+            (hash_path[i], current)
+        } else {
+            (current, hash_path[i])
+        };
+        current = std::hash::pedersen_hash([hash_left, hash_right]);
+    }
+    current
+}
 
 #[test]
 fn test_valid_build_merkle_tree() {
@@ -23,11 +39,16 @@ fn test_valid_build_merkle_tree() {
     let right_branch = std::hash::pedersen_hash([commitment_2, commitment_3]);
 
     let root = std::hash::pedersen_hash([left_branch, right_branch]);
-    
+
+    let mut path: [Field; 32] = [0; 32];
+    path[0] = commitment_0;
+    path[1] = right_branch;
+
     let nullifier = main(
         root,
         0x01, // going from right to left because of Little Endian
-        [commitment_0, right_branch],
+        path,
+        2,
         2
     );
 
