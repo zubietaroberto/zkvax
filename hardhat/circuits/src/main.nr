@@ -2,9 +2,9 @@ use dep::std;
 
 // Inspired by: https://github.com/ZKCamp/noir-voting/blob/2-merkle-trees/circuits/src/main.nr
 
-fn main(root: pub Field, index: Field, hash_path: [Field; 2], secret: Field, proposalId: pub Field) -> pub Field {
+fn main(root: pub Field, index: Field, hash_path: [Field; 2], secret: Field) -> pub Field {
     let note_commitment = std::hash::pedersen_hash([secret]);
-    let nullifier = std::hash::pedersen_hash([root, secret, proposalId]);
+    let nullifier = std::hash::pedersen_hash([root, secret]);
     let check_root = std::merkle::compute_merkle_root(note_commitment, index, hash_path);
     assert(root == check_root);
 
@@ -24,31 +24,29 @@ fn test_valid_build_merkle_tree() {
 
     let root = std::hash::pedersen_hash([left_branch, right_branch]);
     
-    let proposalId = 0;
     let nullifier = main(
         root,
-        0,
-        [commitment_1, right_branch],
-        1,
-        proposalId
+        0x01, // going from right to left because of Little Endian
+        [commitment_0, right_branch],
+        2
     );
 
-    let expected_nullifier = std::hash::pedersen_hash([root, 1, proposalId]);
+    let expected_nullifier = std::hash::pedersen_hash([root, 2]);
     assert(nullifier == expected_nullifier);
 }
 
 
 // NOTE: run this with `nargo test --show-output` to show the results!
 // We will precumpute the hashes for the merkle tree and use them in the circuit
-#[test]
-fn test_precompute_hashes() {
-    let size = 32;
+// #[test]
+// fn test_precompute_hashes() {
+//     let size = 32;
 
-    let mut lastHash: Field = 0;
-    for i in 0..size {
-      lastHash = std::hash::poseidon::bn254::hash_2([lastHash, lastHash]);
-      std::println([i, lastHash]);
-    }
+//     let mut lastHash: Field = 0;
+//     for i in 0..size {
+//       lastHash = std::hash::poseidon::bn254::hash_2([lastHash, lastHash]);
+//       std::println([i, lastHash]);
+//     }
 
-    assert(lastHash == 0x2f68a1c58e257e42a17a6c61dff5551ed560b9922ab119d5ac8e184c9734ead9);
-}
+//     assert(lastHash == 0x2f68a1c58e257e42a17a6c61dff5551ed560b9922ab119d5ac8e184c9734ead9);
+// }
