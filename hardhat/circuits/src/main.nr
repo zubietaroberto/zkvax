@@ -1,14 +1,22 @@
 use dep::std;
 
-// Inspired by: https://github.com/ZKCamp/noir-voting/blob/2-merkle-trees/circuits/src/main.nr
+// Translation of TCash's `withdraw.circom` to Noir
+fn main(
+    root: pub Field,
+    nullifier_hash: pub Field,
+    
+    nullifier: Field,
+    secret: Field,
+    indices: Field,
+    hash_path: [Field; 32]
+) {
+    // Ensure the nullifier is correct
+    let computed_nullifier_hash = std::hash::pedersen_hash([nullifier, secret]);
+    assert(nullifier_hash == computed_nullifier_hash);
 
-fn main(root: pub Field, index: Field, hash_path: [Field; 32], secret: Field, size: Field) -> pub Field {
-    let note_commitment = std::hash::pedersen_hash([secret]);
-    let nullifier = std::hash::pedersen_hash([root, secret]);
-    let check_root = compute_merkle_root(note_commitment, index, hash_path, size);
-    assert(root == check_root);
-
-    nullifier
+    let hashed_secret = std::hash::pedersen_hash([secret]);
+    let computed_root = compute_merkle_root(hashed_secret, indices, hash_path, 32);
+    assert(root == computed_root);
 }
 
 // Inspired By: https://github.com/noir-lang/noir/blob/v0.22.0/noir_stdlib/src/merkle.nr
@@ -44,16 +52,14 @@ fn test_valid_build_merkle_tree() {
     path[0] = commitment_0;
     path[1] = right_branch;
 
-    let nullifier = main(
-        root,
-        0x01, // going from right to left because of Little Endian
+    let computed_root = compute_merkle_root(
+        std::hash::pedersen_hash([2]),
+        0x01, // going from right to left because of Little Endian 'to_le_bits()'
         path,
-        2,
         2
     );
 
-    let expected_nullifier = std::hash::pedersen_hash([root, 2]);
-    assert(nullifier == expected_nullifier);
+    assert(computed_root == root);
 }
 
 
