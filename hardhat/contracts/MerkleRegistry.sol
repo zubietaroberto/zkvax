@@ -3,7 +3,7 @@ pragma solidity 0.8.23;
 
 import "poseidon-sol/contracts/Poseidon.sol";
 
-// Inspired by "MerkleWithHistory" from the "TCash" project, but using Poseidon instead of MiMC
+/** Inspired by "MerkleWithHistory" from the "TCash" project, but using Poseidon instead of MiMC */
 contract MerkleRegistry {
     uint32 levels;
     Poseidon hasher;
@@ -29,7 +29,7 @@ contract MerkleRegistry {
         roots[0] = zeros(_levels - 1);
     }
 
-    // @dev Hash 2 tree leaves, returns Poseidon(_left, _right)
+    /** @dev Hash 2 tree leaves, returns Poseidon(_left, _right) **/
     function hashLeftRight(
         uint256 _left,
         uint256 _right
@@ -70,7 +70,7 @@ contract MerkleRegistry {
         return _nextIndex;
     }
 
-    // @dev Whether the root is present in the root history
+    /** @dev Whether the root is present in the root history */
     function isKnownRoot(bytes32 _root) public view returns (bool) {
         if (_root == 0) {
             return false;
@@ -89,12 +89,12 @@ contract MerkleRegistry {
         return false;
     }
 
-    // @dev Returns the last root
+    /** @dev Returns the last root */
     function getLastRoot() public view returns (bytes32) {
         return roots[currentRootIndex];
     }
 
-    // @dev Precalculated "Poseidon" hashes, when all leaves are "0x0".
+    /** @dev Precalculated "Poseidon" hashes, when all leaves are "0x0". */
     function zeros(uint256 level) public pure returns (bytes32) {
         if (level == 0x00)
             return
