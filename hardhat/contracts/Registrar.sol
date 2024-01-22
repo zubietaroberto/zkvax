@@ -5,7 +5,7 @@ import {UltraVerifier} from "../circuits/contract/zkvax/plonk_vk.sol";
 import "./MerkleRegistry.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-abstract contract Registrar is MerkleRegistry, ReentrancyGuard {
+contract Registrar is MerkleRegistry, ReentrancyGuard {
     UltraVerifier verifier;
 
     // we store all commitments to prevent duplicates
