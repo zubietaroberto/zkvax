@@ -1,30 +1,32 @@
 "use client";
 
 import { Registrar, Registrar__factory } from "@/typechain";
-import { ethers } from "ethers";
-import { BrowserProvider } from "ethers/providers";
+import { ethers, keccak256 } from "ethers";
+import { JsonRpcProvider } from "ethers/providers";
 import { useEffect, useState } from "react";
+import { Insert } from "./Insert";
 
-const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_REGISTRAR_ADDRESS as string;
+const provider = new JsonRpcProvider("http://localhost:8545");
+const testSigner = new ethers.Wallet(
+  process.env.NEXT_PUBLIC_TEST_PRIVATE_KEY as string,
+  provider
+);
 
 export default function TestPage2() {
-  const [signer, setSigner] = useState<ethers.Signer>();
   const [contract, setContract] = useState<Registrar>();
 
-  async function connect() {
-    if (!(window as any).ethereum) {
-      alert("Please install MetaMask");
-      return;
-    } else {
-      alert("MetaMask installed");
-      const provider = new BrowserProvider((window as any).ethereum);
-      const newSigner = await provider.getSigner();
-      setSigner(newSigner);
-
-      const contract = Registrar__factory.connect(CONTRACT_ADDRESS, signer);
-      setContract(contract);
+  useEffect(() => {
+    async function connect() {
+      const newContract = Registrar__factory.connect(
+        CONTRACT_ADDRESS,
+        testSigner
+      );
+      setContract(newContract);
     }
-  }
+
+    connect();
+  }, []);
 
   async function test() {
     if (!contract) {
@@ -32,39 +34,32 @@ export default function TestPage2() {
       return;
     }
 
-    const tx = await contract.zeros(1);
-
-    debugger;
-    console.log(tx);
+    const tx = await contract.getLastRoot();
+    alert(tx);
   }
 
-  async function register() {
+  async function register(secret: string) {
     if (!contract) {
       alert("Please connect first");
       return;
     }
 
-    const tx = await contract.register("test.eth");
-    await tx.wait();
+    if (!secret) {
+      alert("Please enter a secret");
+      return;
+    }
 
-    debugger;
-    console.log(tx);
+    const commitment = keccak256(Buffer.from(secret));
+    const tx = await contract.register(commitment);
+    await tx.wait();
   }
 
   return (
     <div>
       <h1>Test Page 2</h1>
-      <button onClick={connect}>Connect</button>
       <button onClick={test}>Test</button>
 
-      <form>
-        <label>
-          Secret:
-          <input type="text" name="name" />
-        </label>
-
-        <button onClick={register}>Register</button>
-      </form>
+      <Insert onRegister={register} />
     </div>
   );
 }

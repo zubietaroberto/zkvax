@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2022",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -21,6 +21,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/typechain": ["./hardhat/typechain-types/index.ts"],
+      "@/abis/*": ["./hardhat/artifacts/contracts/*"],
       "@/circuits/*": ["./hardhat/circuits/target/*"],
     },
   },
