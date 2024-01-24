@@ -1,51 +1,70 @@
 "use client";
 
-import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { Proposals } from "./Proposals";
+import { Registrar, Registrar__factory } from "@/typechain";
+import { ethers } from "ethers";
+import { BrowserProvider } from "ethers/providers";
+import { useEffect, useState } from "react";
 
-export default function App() {
-  const account = useAccount();
-  const { connectors, connect, status, error } = useConnect();
-  const { disconnect } = useDisconnect();
+const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+
+export default function TestPage2() {
+  const [signer, setSigner] = useState<ethers.Signer>();
+  const [contract, setContract] = useState<Registrar>();
+
+  async function connect() {
+    if (!(window as any).ethereum) {
+      alert("Please install MetaMask");
+      return;
+    } else {
+      alert("MetaMask installed");
+      const provider = new BrowserProvider((window as any).ethereum);
+      const newSigner = await provider.getSigner();
+      setSigner(newSigner);
+
+      const contract = Registrar__factory.connect(CONTRACT_ADDRESS, signer);
+      setContract(contract);
+    }
+  }
+
+  async function test() {
+    if (!contract) {
+      alert("Please connect first");
+      return;
+    }
+
+    const tx = await contract.zeros(1);
+
+    debugger;
+    console.log(tx);
+  }
+
+  async function register() {
+    if (!contract) {
+      alert("Please connect first");
+      return;
+    }
+
+    const tx = await contract.register("test.eth");
+    await tx.wait();
+
+    debugger;
+    console.log(tx);
+  }
 
   return (
-    <>
-      <div>
-        <h2>Account</h2>
+    <div>
+      <h1>Test Page 2</h1>
+      <button onClick={connect}>Connect</button>
+      <button onClick={test}>Test</button>
 
-        <div>
-          status: {account.status}
-          <br />
-          addresses: {JSON.stringify(account.addresses)}
-          <br />
-          chainId: <pre>{account.chainId}</pre>
-        </div>
+      <form>
+        <label>
+          Secret:
+          <input type="text" name="name" />
+        </label>
 
-        {account.status === "connected" && (
-          <button type="button" onClick={() => disconnect()}>
-            Disconnect
-          </button>
-        )}
-      </div>
-
-      {/* <Prover /> */}
-
-      <Proposals />
-
-      <div>
-        <h2>Connect</h2>
-        {connectors.map((connector) => (
-          <button
-            key={connector.uid}
-            onClick={() => connect({ connector })}
-            type="button"
-          >
-            {connector.name}
-          </button>
-        ))}
-        <div>{status}</div>
-        <div>{error?.message}</div>
-      </div>
-    </>
+        <button onClick={register}>Register</button>
+      </form>
+    </div>
   );
 }

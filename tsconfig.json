@@ -15,16 +15,15 @@
     "incremental": true,
     "plugins": [
       {
-        "name": "next"
-      }
+        "name": "next",
+      },
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/contracts/*": ["./hardhat/artifacts/contracts/*"],
-      "@/typechain/*": ["./hardhat/typechain-types/contracts/*"],
-      "@/circuits/*": ["./hardhat/circuits/target/*"]
-    }
+      "@/typechain": ["./hardhat/typechain-types/index.ts"],
+      "@/circuits/*": ["./hardhat/circuits/target/*"],
+    },
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }

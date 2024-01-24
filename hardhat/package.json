@@ -8,6 +8,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.3",
     "chai": "^4.4.1",
+    "dotenv": "^16.4.0",
     "mocha": "^10.2.0"
   }
 }
