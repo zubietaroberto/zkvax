@@ -30,7 +30,10 @@ contract Registrar is MerkleRegistry, ReentrancyGuard {
     @param _commitment the note commitment, which is PedersenHash(nullifier + secret)
     */
     function register(bytes32 _commitment) external payable nonReentrant {
-        require(!commitments[_commitment], "The commitment has been submitted");
+        require(
+            !commitments[_commitment],
+            "The commitment has already been submitted"
+        );
 
         uint32 insertedIndex = _insert(_commitment);
         commitments[_commitment] = true;
@@ -43,13 +46,11 @@ contract Registrar is MerkleRegistry, ReentrancyGuard {
     */
     function check(
         bytes calldata _proof,
-        bytes32 _root,
-        bytes32 _nullifierHash
+        bytes32 _merkleRoot
     ) external payable nonReentrant returns (bool) {
-        require(isKnownRoot(_root), "Cannot find your merkle root"); // Make sure to use a recent one
+        require(isKnownRoot(_merkleRoot), "Cannot find your merkle root"); // Make sure to use a recent one
         bytes32[] memory inputs = new bytes32[](2);
-        inputs[0] = _root;
-        inputs[1] = _nullifierHash;
+        inputs[0] = _merkleRoot;
         require(verifier.verify(_proof, inputs), "Invalid proof");
 
         return true;
