@@ -1,4 +1,4 @@
-import circuit from "@/circuits/pedersen_hash/target/pedersen_hash.json" assert { type: "json" };
+import circuit from "@/circuits/poseidon_hash/target/poseidon_hash.json" assert { type: "json" };
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
 import { useState } from "react";
