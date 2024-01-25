@@ -1,4 +1,4 @@
-import { keccak256 } from "ethers";
+import { keccak256 } from "ethers/crypto";
 import { useState } from "react";
 import { useContractContext } from "./useContractContext";
 
@@ -17,8 +17,8 @@ export function Insert() {
       return;
     }
 
-    const commitment = keccak256(Buffer.from(secret));
-    const tx = await contract.register(commitment);
+    const hash = keccak256(Buffer.from(secret));
+    const tx = await contract.register(hash);
     await tx.wait();
   }
 
