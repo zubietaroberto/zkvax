@@ -1,5 +1,5 @@
 [package]
-name = "zkvax"
+name = "pedersen_hash"
 type = "bin"
 authors = [""]
 compiler_version = ">=0.22.0"

@@ -1,4 +1,4 @@
-import circuit from "@/circuits/zkvax.json" assert { type: "json" };
+import circuit from "@/circuits/pedersen_merkle_tree/target/pedersen_merkle.json" assert { type: "json" };
 import {
   BarretenbergBackend,
   ProofData,
@@ -55,8 +55,8 @@ export function Prover() {
           {isVerifying
             ? "Verifying..."
             : verification
-            ? "VERIFIED"
-            : "VERIFICATION FAILED"}
+              ? "VERIFIED"
+              : "VERIFICATION FAILED"}
         </pre>
       </div>
     </div>

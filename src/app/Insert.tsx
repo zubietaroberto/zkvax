@@ -1,6 +1,11 @@
-import { keccak256 } from "ethers/crypto";
+import circuit from "@/circuits/pedersen_hash/target/pedersen_hash.json" assert { type: "json" };
+import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
+import { Noir } from "@noir-lang/noir_js";
 import { useState } from "react";
 import { useContractContext } from "./useContractContext";
+
+const backend = new BarretenbergBackend(circuit as any);
+const noir = new Noir(circuit as any, backend);
 
 export function Insert() {
   const { contract } = useContractContext();
@@ -17,9 +22,15 @@ export function Insert() {
       return;
     }
 
-    const hash = keccak256(Buffer.from(secret));
-    const tx = await contract.register(hash);
+    await noir.init();
+    const result = await noir.execute({
+      secret: Buffer.from(secret).toString("hex"),
+    });
+    const returnValue = result.returnValue;
+    const tx = await contract.register(returnValue.toString());
     await tx.wait();
+
+    alert("Registered!");
   }
 
   return (
