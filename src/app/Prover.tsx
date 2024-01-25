@@ -1,4 +1,4 @@
-import circuit from "@/circuits/pedersen_merkle_tree/target/pedersen_merkle.json" assert { type: "json" };
+import circuit from "@/circuits/merkle_tree/target/merkle_tree.json" assert { type: "json" };
 import {
   BarretenbergBackend,
   ProofData,

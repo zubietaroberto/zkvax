@@ -1,5 +1,5 @@
 [package]
-name = "pedersen_merkle"
+name = "merkle_tree"
 type = "bin"
 authors = ["Roberto E. Zubieta <zubieta.roberto.e@gmail.com>"]
 compiler_version = ">=0.22.0"
