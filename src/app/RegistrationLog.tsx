@@ -1,32 +1,9 @@
-import { useEffect, useState } from "react";
 import { useContractContext } from "./useContractContext";
-
-interface RegistrationEvent {
-  commitment: string;
-  leafIndex: bigint;
-  timestamp: bigint;
-}
+import { useRegistrationEvents } from "./useRegistrationEvents";
 
 export function RegistrationLog() {
   const { contract } = useContractContext();
-  const [events, setEvents] = useState<RegistrationEvent[]>([]);
-
-  async function getRegistrationEvents() {
-    if (!contract) return;
-
-    const filter = contract.filters.Registration();
-    const events = await contract.queryFilter(filter);
-
-    const parsed: RegistrationEvent[] = events.map((event) => {
-      const { commitment, leafIndex, timestamp } = event.args;
-      return { commitment, leafIndex, timestamp };
-    });
-    setEvents(parsed);
-  }
-
-  useEffect(() => {
-    getRegistrationEvents();
-  }, [contract]);
+  const { events, getRegistrationEvents } = useRegistrationEvents();
 
   return (
     <div>
@@ -47,7 +24,7 @@ export function RegistrationLog() {
       <button
         onClick={(e) => {
           e.preventDefault();
-          getRegistrationEvents();
+          if (contract) getRegistrationEvents(contract);
         }}
       >
         Refresh

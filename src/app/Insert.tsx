@@ -22,6 +22,7 @@ export function Insert() {
       return;
     }
 
+    // TODO: Find a way to do this without circuits
     await noir.init();
     const result = await noir.execute({
       secret: Buffer.from(secret).toString("hex"),

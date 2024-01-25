@@ -6,7 +6,7 @@ fn main(
 
     secret: Field,
     indices: Field,
-    hash_path: [Field; 32]
+    hash_path: [Field; 31]
 ) {
     let hashed_secret = std::hash::poseidon::bn254::hash_1([secret]);
     let computed_root = compute_merkle_root(hashed_secret, indices, hash_path, 32);
@@ -15,7 +15,7 @@ fn main(
 
 // Inspired By: https://github.com/noir-lang/noir/blob/v0.22.0/noir_stdlib/src/merkle.nr
 // Modified because "std::merkle::compute_merkle_root" version forces me to use Slices instead of Arrays.
-fn compute_merkle_root(leaf: Field, index: Field, hash_path: [Field; 32], size: Field) -> Field {
+fn compute_merkle_root(leaf: Field, index: Field, hash_path: [Field; 31], size: Field) -> Field {
     let index_bits = index.to_le_bits(size as u32);
     let mut current = leaf;
     for i in 0..size {
@@ -42,7 +42,7 @@ fn test_valid_build_merkle_tree() {
 
     let root = std::hash::poseidon::bn254::hash_2([left_branch, right_branch]);
 
-    let mut path: [Field; 32] = [0; 32];
+    let mut path: [Field; 31] = [0; 31];
     path[0] = commitment_0;
     path[1] = right_branch;
 

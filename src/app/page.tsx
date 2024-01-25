@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Insert } from "./Insert";
 import { RegistrationLog } from "./RegistrationLog";
 import { ContractContext } from "./useContractContext";
+import { GenerateProof } from "./GenerateProof";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_REGISTRAR_ADDRESS as string;
 const provider = new JsonRpcProvider("http://localhost:8545");
@@ -42,17 +43,17 @@ export default function TestPage2() {
 
   return (
     <ContractContext.Provider value={{ contract }}>
-      <div>
-        <h1>Test Page 2</h1>
-        <button onClick={test}>Test</button>
+      <h1>Test Page 2</h1>
+      <button onClick={test}>Test</button>
 
-        <hr />
+      <hr />
+      <Insert />
 
-        <Insert />
+      <hr />
+      <RegistrationLog />
 
-        <hr />
-        <RegistrationLog />
-      </div>
+      <hr />
+      <GenerateProof />
     </ContractContext.Provider>
   );
 }

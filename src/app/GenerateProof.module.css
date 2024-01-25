@@ -1,0 +1,19 @@
+.form {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  flex-flow: column;
+  gap: 5px;
+  padding: 10px;
+}
+
+.form label {
+  grid-column: 1;
+}
+
+.form input {
+  grid-column: 2;
+}
+
+.form :is(button, pre) {
+  grid-column: 1 / 3;
+}
