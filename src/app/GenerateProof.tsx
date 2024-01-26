@@ -14,7 +14,7 @@ const proverNoir = new Noir(proverCircuit as any, proverBackend);
 
 enum GenerationState {
   NOT_STARTED,
-  GENERATING,
+  LOADING,
   READY_TO_PROVE,
   PROVING,
   DONE_PROVING,
@@ -26,12 +26,9 @@ export function GenerateProof() {
   const [generationState, setGenerationState] = useState<GenerationState>(
     GenerationState.NOT_STARTED
   );
-  const [hashedSecret, setHashedSecret] = useState<string>("");
   const [proof, setProof] = useState<ProofData>();
-  const [lastRoot, setLastRoot] = useState<string>("");
+  const [inputs, setInputs] = useState<InputMap>();
   const [secret, setSecret] = useState<string>("");
-  const [indices, setIndices] = useState<string>("");
-  const [hashPath, setHashPath] = useState<string[]>([]);
 
   async function getDataFromContract() {
     if (!contract) return;
@@ -40,28 +37,29 @@ export function GenerateProof() {
       return;
     }
 
-    setGenerationState(GenerationState.GENERATING);
+    setGenerationState(GenerationState.LOADING);
 
     const result = await getProofDataFromContract(contract, secret);
     if (result) {
-      setHashedSecret(result.hashedSecret);
-      setLastRoot(result.lastRoot);
-      setIndices(result.indices);
-      setHashPath(result.hashPath);
+      setInputs({
+        root: result.lastRoot,
+        secret: result.hashedSecret,
+        indices: result.indices,
+        hash_path: result.hashPath,
+      });
     }
 
     setGenerationState(GenerationState.READY_TO_PROVE);
   }
 
   async function prove() {
+    if (!inputs) {
+      alert("Please load data from contract first");
+      return;
+    }
+
     try {
       setGenerationState(GenerationState.PROVING);
-      const inputs: InputMap = {
-        root: lastRoot,
-        secret: hashedSecret,
-        indices: indices,
-        hash_path: hashPath,
-      };
       const proof = await proverNoir.generateFinalProof(inputs);
       console.log("proof", proof);
       setProof(proof);
@@ -92,23 +90,35 @@ export function GenerateProof() {
           Load Data from Contract
         </button>
 
-        {generationState === GenerationState.GENERATING && (
-          <pre>Generating...</pre>
+        {generationState === GenerationState.LOADING && (
+          <pre>Loading data from contract...</pre>
         )}
 
         {generationState === GenerationState.READY_TO_PROVE && (
           <>
             <label>Hashed Secret:</label>
-            <input type="text" value={hashedSecret} readOnly />
+            <input
+              type="text"
+              value={inputs?.["secret"].toString() ?? ""}
+              readOnly
+            />
 
             <label>Last Root:</label>
-            <input type="text" value={lastRoot} readOnly />
+            <input
+              type="text"
+              value={inputs?.["root"].toString() ?? ""}
+              readOnly
+            />
 
             <label>Indices:</label>
-            <input type="text" value={indices} readOnly />
+            <input
+              type="text"
+              value={inputs?.["indices"].toString() ?? ""}
+              readOnly
+            />
 
             <label>Hash Path:</label>
-            <textarea value={hashPath} readOnly />
+            <textarea value={inputs?.["hash_path"].toString() ?? ""} readOnly />
 
             <button
               onClick={(e) => {
@@ -126,7 +136,10 @@ export function GenerateProof() {
         {generationState === GenerationState.PROVING && <pre>Proving...</pre>}
 
         {generationState === GenerationState.DONE_PROVING && proof && (
-          <pre>{Buffer.from(proof.proof).toString("hex")}</pre>
+          <>
+            <h2>Proof:</h2>
+            <pre>{Buffer.from(proof.proof).toString("hex")}</pre>
+          </>
         )}
 
         {generationState === GenerationState.DONE_PROVING && !proof && (
