@@ -2,8 +2,7 @@ import { useContractContext } from "./useContractContext";
 import { useRegistrationEvents } from "./useRegistrationEvents";
 
 export function RegistrationLog() {
-  const { contract } = useContractContext();
-  const { events, getRegistrationEvents } = useRegistrationEvents();
+  const { events } = useRegistrationEvents();
 
   return (
     <div>
@@ -20,15 +19,6 @@ export function RegistrationLog() {
           ))
         )}
       </ol>
-
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          if (contract) getRegistrationEvents(contract);
-        }}
-      >
-        Refresh
-      </button>
     </div>
   );
 }

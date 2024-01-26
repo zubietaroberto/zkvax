@@ -130,26 +130,30 @@ export function GenerateProof() {
             </button>
           </>
         )}
-      </form>
-
-      <div>
-        {generationState === GenerationState.PROVING && <pre>Proving...</pre>}
+        {generationState === GenerationState.PROVING && (
+          <>
+            <pre>Proving...</pre>
+          </>
+        )}
 
         {generationState === GenerationState.DONE_PROVING && proof && (
           <>
-            <h2>Proof:</h2>
-            <pre>{Buffer.from(proof.proof).toString("hex")}</pre>
+            <label>Proof:</label>
+            <textarea value={proof.toString()} readOnly />
           </>
         )}
 
         {generationState === GenerationState.DONE_PROVING && !proof && (
-          <pre>Proof is empty (error?)</pre>
+          <>
+            <label>Proof:</label>
+            <textarea value="No proof generated" readOnly />
+          </>
         )}
 
         {generationState === GenerationState.ERROR && (
           <pre>There was an error generating the proof</pre>
         )}
-      </div>
+      </form>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { Registrar } from "@/typechain";
 
 export interface RegistrationEvent {
   commitment: string;
-  leafIndex: bigint;
+  leafIndex: number;
   timestamp: bigint;
 }
 
@@ -16,7 +16,7 @@ export async function getRegistrationEvents(
 
   const parsed: RegistrationEvent[] = events.map((event) => {
     const { commitment, leafIndex, timestamp } = event.args;
-    return { commitment, leafIndex, timestamp };
+    return { commitment, leafIndex: Number(leafIndex), timestamp };
   });
 
   return parsed;
