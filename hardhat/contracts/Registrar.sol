@@ -49,7 +49,7 @@ contract Registrar is MerkleRegistry, ReentrancyGuard {
         bytes32 _merkleRoot
     ) external payable nonReentrant returns (bool) {
         require(isKnownRoot(_merkleRoot), "Cannot find your merkle root"); // Make sure to use a recent one
-        bytes32[] memory inputs = new bytes32[](2);
+        bytes32[] memory inputs = new bytes32[](1);
         inputs[0] = _merkleRoot;
         require(verifier.verify(_proof, inputs), "Invalid proof");
 

@@ -4,11 +4,12 @@ import { Registrar, Registrar__factory } from "@/typechain";
 import { ethers } from "ethers";
 import { JsonRpcProvider } from "ethers/providers";
 import { useEffect, useState } from "react";
+import { GenerateProof } from "./GenerateProof";
 import { Insert } from "./Insert";
 import { RegistrationLog } from "./RegistrationLog";
-import { ContractContext } from "./useContractContext";
-import { GenerateProof } from "./GenerateProof";
 import { Verifier } from "./Verifier";
+import { VerifierFromContract } from "./VerifierFromContract";
+import { ContractContext } from "./useContractContext";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_REGISTRAR_ADDRESS as string;
 const provider = new JsonRpcProvider("http://localhost:8545");
@@ -45,7 +46,7 @@ export default function TestPage2() {
   return (
     <ContractContext.Provider value={{ contract }}>
       <h1>Test Page 2</h1>
-      <button onClick={test}>Test</button>
+      <button onClick={test}>Get Last Root</button>
 
       <hr />
       <Insert />
@@ -58,6 +59,9 @@ export default function TestPage2() {
 
       <hr />
       <Verifier />
+
+      <hr />
+      <VerifierFromContract />
     </ContractContext.Provider>
   );
 }
