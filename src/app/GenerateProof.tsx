@@ -60,8 +60,9 @@ export function GenerateProof() {
 
     try {
       setGenerationState(GenerationState.PROVING);
+      await proverNoir.init();
       const proof = await proverNoir.generateFinalProof(inputs);
-      console.log("proof", proof);
+      console.log("proof", Buffer.from(proof.proof).toString("hex"));
       setProof(proof);
       setGenerationState(GenerationState.DONE_PROVING);
     } catch (error) {
@@ -139,7 +140,10 @@ export function GenerateProof() {
         {generationState === GenerationState.DONE_PROVING && proof && (
           <>
             <label>Proof:</label>
-            <textarea value={proof.toString()} readOnly />
+            <textarea
+              value={Buffer.from(proof.proof).toString("hex")}
+              readOnly
+            />
           </>
         )}
 

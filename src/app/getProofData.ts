@@ -5,7 +5,7 @@ import { Noir } from "@noir-lang/noir_js";
 import { getRegistrationEvents } from "./useRegistrationEvents";
 import { Registrar } from "@/typechain";
 
-const LEVELS = 32;
+const LEVELS = 31;
 const hasherBackend = new BarretenbergBackend(hasherCircuit1 as any);
 const hasherNoir = new Noir(hasherCircuit1 as any, hasherBackend);
 
@@ -45,7 +45,6 @@ const zeroHashes = [
   "0x0f8666b62ed17491c50ceadead57d4cd597ef3821d65c328744c74e553dac26d",
   "0x0918d46bf52d98b034413f4a1a1c41594e7a7a3f6ae08cb43d1a2a230e1959ef",
   "0x1bbeb01b4c479ecde76917645e404dfa2e26f90d0afc5a65128513ad375c5ff2",
-  "0x2f68a1c58e257e42a17a6c61dff5551ed560b9922ab119d5ac8e184c9734ead9",
 ];
 
 export interface ContractdataResults {
@@ -114,6 +113,8 @@ export async function getProofDataFromContract(
       }
     }
     nextLevel = newLevel;
+
+    console.log(`Leaf for level ${index}`, lookingForLeaf);
   }
 
   return {

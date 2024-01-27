@@ -6,18 +6,17 @@ fn main(
 
     secret: Field,
     indices: Field,
-    hash_path: [Field; 32]
+    hash_path: [Field; 31]
 ) {
-    let computed_root = compute_merkle_root(secret, indices, hash_path, 32);
+    let computed_root = compute_merkle_root(secret, indices, hash_path, 31);
     assert(root == computed_root);
 }
 
 // Inspired By: https://github.com/noir-lang/noir/blob/v0.22.0/noir_stdlib/src/merkle.nr
 // Modified because "std::merkle::compute_merkle_root" version forces me to use Slices instead of Arrays.
-fn compute_merkle_root(leaf: Field, index: Field, hash_path: [Field; 32], size: Field) -> Field {
+fn compute_merkle_root(leaf: Field, index: Field, hash_path: [Field; 31], size: Field) -> Field {
     let index_bits = index.to_le_bits(size as u32);
     let mut current = leaf;
-    std::println("");
     for i in 0..size {
         let path_bit = index_bits[i] as bool;
         let (hash_left, hash_right) = if path_bit {
@@ -25,9 +24,7 @@ fn compute_merkle_root(leaf: Field, index: Field, hash_path: [Field; 32], size: 
         } else {
             (current, hash_path[i])
         };
-        std::println([i, hash_left, hash_right]);
         current = std::hash::poseidon::bn254::hash_2([hash_left, hash_right]);
-        std::println([i, current]);
     }
     current
 }
@@ -44,7 +41,7 @@ fn test_valid_build_merkle_tree() {
 
     let root = std::hash::poseidon::bn254::hash_2([left_branch, right_branch]);
 
-    let mut path: [Field; 32] = [0; 32];
+    let mut path: [Field; 31] = [0; 31];
     path[0] = commitment_0;
     path[1] = right_branch;
 
@@ -87,7 +84,7 @@ fn test_correct_hashing() {
 #[test]
 fn test_function_smoketest() {
     let hashed_secret = 0x208bcf178d159d13b732ebfeffb7d07e0ea173bd0baf9da2a8a3690c8b761b7f; // Poseidon("test")
-    let initial_root = 0x1fd5dae28f77e29b23ff61e8d62e6cc0878bd9489bab28a6262728dda203788a;
+    let initial_root = 0x188e8544a9260c8b7ca54500baee2bf639f9fc36c2f1c16172d257566c25e722;
     let hash_path = [
         0x2098f5fb9e239eab3ceac3f27b81e481dc3124d55ffed523a839ee8446b64864,
         0x1069673dcdb12263df301a6ff584a7ec261a44cb9dc68df067a4774460b1f1e1,
@@ -119,8 +116,8 @@ fn test_function_smoketest() {
         0x24be905fa71335e14c638cc0f66a8623a826e768068a9e968bb1a1dde18a72d2,
         0x0f8666b62ed17491c50ceadead57d4cd597ef3821d65c328744c74e553dac26d,
         0x0918d46bf52d98b034413f4a1a1c41594e7a7a3f6ae08cb43d1a2a230e1959ef,
-        0x1bbeb01b4c479ecde76917645e404dfa2e26f90d0afc5a65128513ad375c5ff2,
-        0x2f68a1c58e257e42a17a6c61dff5551ed560b9922ab119d5ac8e184c9734ead9
+        0x1bbeb01b4c479ecde76917645e404dfa2e26f90d0afc5a65128513ad375c5ff2
+        // 0x2f68a1c58e257e42a17a6c61dff5551ed560b9922ab119d5ac8e184c9734ead9
     ];
 
     main(
