@@ -8,6 +8,7 @@ import { Insert } from "./Insert";
 import { RegistrationLog } from "./RegistrationLog";
 import { ContractContext } from "./useContractContext";
 import { GenerateProof } from "./GenerateProof";
+import { Verifier } from "./Verifier";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_REGISTRAR_ADDRESS as string;
 const provider = new JsonRpcProvider("http://localhost:8545");
@@ -54,6 +55,9 @@ export default function TestPage2() {
 
       <hr />
       <GenerateProof />
+
+      <hr />
+      <Verifier />
     </ContractContext.Provider>
   );
 }

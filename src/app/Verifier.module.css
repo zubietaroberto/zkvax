@@ -1,0 +1,18 @@
+.form {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 5px;
+  padding: 5px;
+}
+
+.form label {
+  grid-column: 1;
+}
+
+.form :is(input, textarea) {
+  grid-column: 2;
+}
+
+.form :is(button, pre) {
+  grid-column: 1 / 3;
+}
