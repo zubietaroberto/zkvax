@@ -1,6 +1,7 @@
 import circuit from "@/circuits/poseidon_hash.json" assert { type: "json" };
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
+import { BN } from "bn.js";
 import { useState } from "react";
 import { useContractContext } from "./useContractContext";
 
@@ -22,11 +23,13 @@ export function Insert() {
       return;
     }
 
+    // TODO: Find a way to do this without BN.js
+    const bytes = Buffer.from(secret).toJSON().data;
+    const input = new BN(bytes, 16, "le").toString();
+
     // TODO: Find a way to do this without circuits
     await noir.init();
-    const result = await noir.execute({
-      secret: Buffer.from(secret).toString("hex"),
-    });
+    const result = await noir.execute({ secret: input });
     const returnValue = result.returnValue;
     const tx = await contract.register(returnValue.toString());
     await tx.wait();

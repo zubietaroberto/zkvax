@@ -1,9 +1,10 @@
 import hasherCircuit1 from "@/circuits/poseidon_hash.json" assert { type: "json" };
 import hasherCircuit2 from "@/circuits/poseidon_hash_2.json" assert { type: "json" };
+import { Registrar } from "@/typechain";
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
+import { BN } from "bn.js";
 import { getRegistrationEvents } from "./useRegistrationEvents";
-import { Registrar } from "@/typechain";
 
 const LEVELS = 31;
 const hasherBackend = new BarretenbergBackend(hasherCircuit1 as any);
@@ -58,11 +59,13 @@ export async function getProofDataFromContract(
   contract: Registrar,
   secret: string
 ): Promise<ContractdataResults | null> {
+  // TODO: Find a way to do this without BN.js
+  const bytes = Buffer.from(secret).toJSON().data;
+  const input = new BN(bytes, 16, "le").toString();
+
   // TODO: Find a way to do this without circuits
   await hasherNoir.init();
-  const result = await hasherNoir.execute({
-    secret: Buffer.from(secret).toString("hex"),
-  });
+  const result = await hasherNoir.execute({ secret: input });
   const newHashedSecret = result.returnValue;
 
   const events = await getRegistrationEvents(contract);
