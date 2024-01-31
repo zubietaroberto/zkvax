@@ -1,4 +1,4 @@
-import proverCircuit from "@/circuits/merkle_tree/target/merkle_tree.json" assert { type: "json" };
+import proverCircuit from "@/circuits/merkle_tree.json" assert { type: "json" };
 import {
   BarretenbergBackend,
   ProofData,

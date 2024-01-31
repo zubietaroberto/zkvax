@@ -1,0 +1,3 @@
+[workspace]
+members = ['merkle_tree', 'pedersen_hash', 'poseidon_hash', 'poseidon_hash_2']
+defaultmember='merkle_tree'

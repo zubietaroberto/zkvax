@@ -1,5 +1,5 @@
-import hasherCircuit1 from "@/circuits/poseidon_hash/target/poseidon_hash.json" assert { type: "json" };
-import hasherCircuit2 from "@/circuits/poseidon_hash_2/target/poseidon_hash_2.json" assert { type: "json" };
+import hasherCircuit1 from "@/circuits/poseidon_hash.json" assert { type: "json" };
+import hasherCircuit2 from "@/circuits/poseidon_hash_2.json" assert { type: "json" };
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
 import { getRegistrationEvents } from "./useRegistrationEvents";

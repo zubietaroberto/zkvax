@@ -22,7 +22,7 @@
       "@/*": ["./src/*"],
       "@/typechain": ["./hardhat/typechain-types/index.ts"],
       "@/abis/*": ["./hardhat/artifacts/contracts/*"],
-      "@/circuits/*": ["./hardhat/circuits/*"],
+      "@/circuits/*": ["./hardhat/circuits/target/*"],
     },
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

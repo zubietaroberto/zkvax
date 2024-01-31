@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.23;
 
-import {UltraVerifier} from "../circuits/merkle_tree/contract/merkle_tree/plonk_vk.sol";
+import {UltraVerifier} from "../circuits/contract/merkle_tree/plonk_vk.sol";
 import "./MerkleRegistry.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 

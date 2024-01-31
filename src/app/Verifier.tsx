@@ -1,4 +1,4 @@
-import circuit from "@/circuits/merkle_tree/target/merkle_tree.json" assert { type: "json" };
+import circuit from "@/circuits/merkle_tree.json" assert { type: "json" };
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
 import { useState } from "react";
