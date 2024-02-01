@@ -1,10 +1,10 @@
 import hasherCircuit1 from "@/circuits/poseidon_hash.json" assert { type: "json" };
 import hasherCircuit2 from "@/circuits/poseidon_hash_2.json" assert { type: "json" };
+import { getRegistrationEvents } from "@/components/useRegistrationEvents";
 import { Registrar } from "@/typechain";
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
 import { BN } from "bn.js";
-import { getRegistrationEvents } from "./useRegistrationEvents";
 
 const LEVELS = 31;
 const hasherBackend = new BarretenbergBackend(hasherCircuit1 as any);
