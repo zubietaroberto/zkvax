@@ -88,7 +88,7 @@ export async function getProofDataFromContract(
   let nextLevel: string[] = startingLeaves;
   const newHashpath: string[] = [];
   let lookingForLeaf = newHashedSecret;
-  let newIndices = "";
+  let newIndices = 0b0; // Note: Bitmask. 0 for left, 1 for right
   for (let index = 0; index < LEVELS; index++) {
     const newLevel: string[] = [];
     for (let j = 0; j < nextLevel.length; j += 2) {
@@ -106,13 +106,13 @@ export async function getProofDataFromContract(
       if (left === lookingForLeaf) {
         newHashpath.push(right);
         lookingForLeaf = newLeafHash;
-        newIndices = "0" + newIndices;
       }
 
       if (right === lookingForLeaf) {
         newHashpath.push(left);
         lookingForLeaf = newLeafHash;
-        newIndices = "1" + newIndices;
+        // NOTE: newIndices is a bitmask where each bit represents the direction of the hash
+        newIndices = newIndices ^ (1 << index);
       }
     }
     nextLevel = newLevel;
@@ -124,6 +124,6 @@ export async function getProofDataFromContract(
     lastRoot: nextLevel[0],
     hashedSecret: newHashedSecret.toString(),
     hashPath: newHashpath,
-    indices: `0x${newIndices}`,
+    indices: newIndices.toString(),
   };
 }
