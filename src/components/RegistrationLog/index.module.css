@@ -1,0 +1,22 @@
+.log {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 15px;
+
+  width: 100%;
+  padding: 5px;
+}
+
+.log :global(.index) {
+  grid-column: 1;
+}
+
+.log :global(.time) {
+  grid-column: 2;
+}
+
+.log :global(.commitment) {
+  grid-column: 3;
+  line-break: anywhere;
+  font-family: monospace;
+}
