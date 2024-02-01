@@ -45,7 +45,7 @@ export function Verifier() {
 
   return (
     <section>
-      <h2>Verify:</h2>
+      <h2>Verify Outside the Blockchain:</h2>
 
       <form className={styles.form}>
         <label>Tree Root Hash:</label>

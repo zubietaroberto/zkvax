@@ -1,19 +1,21 @@
 "use client";
 
-import { RegistrationLog } from "@/components/RegistrationLog";
 import { ContractContext, useContract } from "@/components/useContractContext";
-import { Insert } from "./Insert";
+import { RegistrationLog } from "@/components/RegistrationLog";
+import { GenerateProof } from "./GenerateProof";
 
-export default function RegistrationPage() {
+export default function ProofPage() {
   const contract = useContract();
 
   return (
     <ContractContext.Provider value={{ contract }}>
-      <h1>Register a new ID</h1>
-      <Insert />
+      <h1>Generate ZK Proof</h1>
 
       <hr />
       <RegistrationLog />
+
+      <hr />
+      <GenerateProof />
     </ContractContext.Provider>
   );
 }

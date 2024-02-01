@@ -11,6 +11,11 @@ export default function HomePage() {
         <li>
           <Link href="/registration">Register a new ID</Link>
         </li>
+
+        <li>
+          <Link href="/prove">Create a Zero Knowledge Proof</Link>
+        </li>
+
         <li>
           <Link href="/verification">Verify an ID</Link>
         </li>
