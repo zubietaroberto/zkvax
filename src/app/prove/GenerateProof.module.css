@@ -14,6 +14,12 @@
   grid-column: 2;
 }
 
-.form :is(button, pre) {
+.form :is(button, pre, :global(.span-row)) {
   grid-column: 1 / 3;
+}
+
+:global(.result) {
+  grid-column: 1 / 3;
+  font-family: monospace;
+  line-break: anywhere;
 }

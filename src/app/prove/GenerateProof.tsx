@@ -39,17 +39,22 @@ export function GenerateProof() {
 
     setGenerationState(GenerationState.LOADING);
 
-    const result = await getProofDataFromContract(contract, secret);
-    if (result) {
-      setInputs({
-        root: result.lastRoot,
-        secret: result.hashedSecret,
-        indices: result.indices,
-        hash_path: result.hashPath,
-      });
-    }
+    try {
+      const result = await getProofDataFromContract(contract, secret);
+      if (result) {
+        setInputs({
+          root: result.lastRoot,
+          secret: result.hashedSecret,
+          indices: result.indices,
+          hash_path: result.hashPath,
+        });
+      }
 
-    setGenerationState(GenerationState.READY_TO_PROVE);
+      setGenerationState(GenerationState.READY_TO_PROVE);
+    } catch (error) {
+      console.error(error);
+      setGenerationState(GenerationState.ERROR);
+    }
   }
 
   async function prove() {
@@ -139,11 +144,10 @@ export function GenerateProof() {
 
         {generationState === GenerationState.DONE_PROVING && proof && (
           <>
-            <label>Proof:</label>
-            <textarea
-              value={Buffer.from(proof.proof).toString("hex")}
-              readOnly
-            />
+            <label className="span-row">Generated proof: </label>
+            <div className="span-row result">
+              {Buffer.from(proof.proof).toString("hex")}
+            </div>
           </>
         )}
 
