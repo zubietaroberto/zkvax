@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./Verifier.module.css";
-import { useContractContext } from "./useContractContext";
+import { useContractContext } from "../components/useContractContext";
 
 enum VerificationState {
   NOT_STARTED,

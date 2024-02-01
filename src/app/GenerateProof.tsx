@@ -6,7 +6,7 @@ import {
 import { InputMap, Noir } from "@noir-lang/noir_js";
 import { useState } from "react";
 import styles from "./GenerateProof.module.css";
-import { useContractContext } from "./useContractContext";
+import { useContractContext } from "../components/useContractContext";
 import { getProofDataFromContract } from "./getProofData";
 
 const proverBackend = new BarretenbergBackend(proverCircuit as any);

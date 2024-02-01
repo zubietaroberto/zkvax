@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useContractContext } from "./useContractContext";
+import { useContractContext } from "../components/useContractContext";
 import { Registrar } from "@/typechain";
 
 export interface RegistrationEvent {

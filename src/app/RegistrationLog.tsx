@@ -1,4 +1,4 @@
-import { useContractContext } from "./useContractContext";
+import { useContractContext } from "../components/useContractContext";
 import { useRegistrationEvents } from "./useRegistrationEvents";
 
 export function RegistrationLog() {

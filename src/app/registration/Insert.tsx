@@ -1,9 +1,9 @@
 import circuit from "@/circuits/poseidon_hash.json" assert { type: "json" };
+import { useContractContext } from "@/components/useContractContext";
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
 import { BN } from "bn.js";
 import { useState } from "react";
-import { useContractContext } from "./useContractContext";
 
 const backend = new BarretenbergBackend(circuit as any);
 const noir = new Noir(circuit as any, backend);

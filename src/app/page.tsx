@@ -1,37 +1,13 @@
 "use client";
 
-import { Registrar, Registrar__factory } from "@/typechain";
-import { ethers } from "ethers";
-import { JsonRpcProvider } from "ethers/providers";
-import { useEffect, useState } from "react";
+import { ContractContext, useContract } from "@/components/useContractContext";
 import { GenerateProof } from "./GenerateProof";
-import { Insert } from "./Insert";
 import { RegistrationLog } from "./RegistrationLog";
 import { Verifier } from "./Verifier";
 import { VerifierFromContract } from "./VerifierFromContract";
-import { ContractContext } from "./useContractContext";
-
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_REGISTRAR_ADDRESS as string;
-const provider = new JsonRpcProvider("http://localhost:8545");
-const testSigner = new ethers.Wallet(
-  process.env.NEXT_PUBLIC_TEST_PRIVATE_KEY as string,
-  provider
-);
 
 export default function TestPage2() {
-  const [contract, setContract] = useState<Registrar>();
-
-  useEffect(() => {
-    async function connect() {
-      const newContract = Registrar__factory.connect(
-        CONTRACT_ADDRESS,
-        testSigner
-      );
-      setContract(newContract);
-    }
-
-    connect();
-  }, []);
+  const contract = useContract();
 
   async function test() {
     if (!contract) {
@@ -47,9 +23,6 @@ export default function TestPage2() {
     <ContractContext.Provider value={{ contract }}>
       <h1>Test Page 2</h1>
       <button onClick={test}>Get Last Root</button>
-
-      <hr />
-      <Insert />
 
       <hr />
       <RegistrationLog />
